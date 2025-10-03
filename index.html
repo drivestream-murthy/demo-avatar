@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Avatar Gen — Portrait ERP (Simple)</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>">
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <style>
+      :root { --w: 420px; }
+      * { box-sizing: border-box; }
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        background:#0f1115; color:#eaeef5; display:flex; justify-content:center; padding:16px;
+      }
+      #app { width:min(100%, var(--w)); position: relative; }
+
+      #hdr { display:flex; justify-content:flex-end; align-items:center; margin-bottom:8px; }
+      #logo { height:28px; opacity:.95; }
+
+      #stage {
+        width:100%; aspect-ratio:9/16; border-radius:16px; overflow:hidden;
+        display:grid; grid-template-rows: 0fr 1fr; transition: grid-template-rows .25s ease;
+        background:#000 center/cover no-repeat;
+        box-shadow:0 8px 30px rgba(0,0,0,.35); position: relative;
+      }
+      #stage.has-dock { grid-template-rows: 0.40fr 0.60fr; }
+
+      #dock { min-height:0; overflow:hidden; background:#000; display:none; }
+      #stage.has-dock #dock { display:block; }
+      #dock iframe, #dock video { width:100%; height:100%; border:0; display:block; }
+
+      #avatarPane { position:relative; background:transparent; }
+      #avatarVideo { position:absolute; inset:0; background:#000; }
+
+      #controls { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
+      button, input[type="text"] {
+        padding:10px 12px; border-radius:10px; border:1px solid #2a2f3a;
+        background:#151a28; color:#eaeef5;
+      }
+      button { cursor:pointer; }
+      button:hover { background:#1c2336; }
+      #qbox { flex:1 1 auto; min-width:140px; }
+
+      #banner {
+        display:none; margin-top:10px; padding:10px; border-radius:10px;
+        background:#2b132a; border:1px solid #6a2a67; color:#ffd3e6; font-size:14px; white-space:pre-wrap;
+      }
+      #banner.show { display:block; }
+
+      #log {
+        margin-top:10px; font-family:ui-monospace, Menlo, Consolas, monospace; font-size:12px;
+        background:#0b0e14; color:#c9d1d9; padding:10px; border-radius:10px; border:1px solid #2a2f3a;
+        height:160px; overflow:auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="hdr"><img id="logo" src="/assets/Drivestream_LARGE.jpg" alt="Drivestream"/></div>
+
+      <div id="stage" style="background-image:url('/assets/default-image.jpg')">
+        <div id="dock"></div>
+        <div id="avatarPane">
+          <video id="avatarVideo" playsinline autoplay></video>
+        </div>
+      </div>
+
+      <div id="controls">
+        <button id="startBtn">▶ Start</button>
+        <button id="stopBtn">■ Stop</button>
+        <button id="unmuteBtn">🔊 Unmute</button>
+        <input id="qbox" type="text" placeholder="Type a question…"/>
+        <button id="sendBtn">Send</button>
+      </div>
+
+      <div id="banner"></div>
+      <div id="log"></div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
