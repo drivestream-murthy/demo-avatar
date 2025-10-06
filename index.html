@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel="icon" href="/assets/favicon.ico">
     <title>Drivestream — Interactive Avatar (Portrait)</title>
     <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
     <style>
@@ -34,12 +35,11 @@
       <div class="phone">
         <div id="bg"></div>
         <img class="logo" src="./assets/Drivestream_LARGE.jpg" alt="Drivestream" />
-        <div id="videoDock">
-          <iframe id="contentFrame" referrerpolicy="no-referrer"
-            allow="autoplay; fullscreen; clipboard-write; encrypted-media; picture-in-picture"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation">
-          </iframe>
-        </div>
+          <div id="videoDock">
+            <iframe id="contentFrame" referrerpolicy="no-referrer"
+              allow="autoplay; fullscreen; clipboard-write; encrypted-media; picture-in-picture">
+            </iframe>
+          </div>
         <video id="liveVideo" autoplay playsinline muted></video>
         <div id="unmuteHint"><div class="hintBubble">🔈 Tap anywhere to enable sound</div></div>
         <div id="status"></div>
