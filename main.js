@@ -1,4 +1,4 @@
-/* global livekitClient */
+/* global LivekitClient */
 const statusEl   = document.getElementById('status');
 const bgEl       = document.getElementById('bg');
 const dock       = document.getElementById('videoDock');
@@ -6,11 +6,17 @@ const frame      = document.getElementById('contentFrame');
 const liveVideo  = document.getElementById('liveVideo');
 const unmuteHint = document.getElementById('unmuteHint');
 
+// Guard: ensure LivekitClient is present
+if (!window.LivekitClient) {
+  console.error('LivekitClient global not found. Check the <script> tag URL and that it loads before main.js.');
+  statusEl.textContent = 'Failed to load LiveKit. Hard refresh (Ctrl+Shift+R) and check network.';
+}
+
 const UNI_BG = {
-  'harvard':  './assets/harvard-university-title.jpg',
-  'oxford':   './assets/oxford-university-title.jpg',
-  'stanford': './assets/stanford-university-title.jpg',
-  'default':  './assets/default-image.jpg'
+  harvard:  './assets/harvard-university-title.jpg',
+  oxford:   './assets/oxford-university-title.jpg',
+  stanford: './assets/stanford-university-title.jpg',
+  default:  './assets/default-image.jpg'
 };
 
 const MODULES = {
@@ -81,6 +87,7 @@ async function ensureAudio() {
     await liveVideo.play();
     unmuteHint.style.display = 'none';
   } catch {
+    // browser blocked autoplay with sound
     unmuteHint.style.display = 'grid';
     const unlock = async () => {
       unmuteHint.style.display = 'none';
@@ -97,11 +104,11 @@ async function startAvatar() {
   await sleep(2000);
 
   setStatus('Creating session…');
-  const info = await api('/api/session');
+  const info = await api('/api/session'); // { session_id, url, access_token }
   sessionId = info.session_id;
 
   setStatus('Connecting media…');
-  room = new livekitClient.Room();
+  room = new LivekitClient.Room();           // <-- Capital L
   await room.connect(info.url, info.access_token);
 
   mediaStream = new MediaStream();
@@ -109,7 +116,7 @@ async function startAvatar() {
   liveVideo.autoplay = true;
   liveVideo.playsInline = true;
 
-  room.on(livekitClient.RoomEvent.TrackSubscribed, (track) => {
+  room.on(LivekitClient.RoomEvent.TrackSubscribed, (track) => {   // <-- Capital L
     if (track.kind === 'video' || track.kind === 'audio') {
       mediaStream.addTrack(track.mediaStreamTrack);
     }
@@ -118,6 +125,7 @@ async function startAvatar() {
   await sleep(300);
   await ensureAudio();
 
+  // Greet → ask name & university
   setStatus('Greeting…');
   await talk("Hi there! How are you? I hope you're doing good.");
   await sleep(800);
@@ -127,7 +135,7 @@ async function startAvatar() {
   autoListen();
 }
 
-// Web Speech API for STT (Chrome)
+// Web Speech API (Chrome) for mic → text
 let recognizer, listening = false;
 function autoListen() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -146,11 +154,12 @@ function autoListen() {
 
   navigator.mediaDevices.getUserMedia({ audio: true })
     .then(() => { listening = true; recognizer.start(); })
-    .catch(() => {});
+    .catch(() => { /* mic denied → stay in text-only mode */ });
 }
 
 async function handleUserUtterance(text) {
   if (!text) return;
+
   const uni = changeBackgroundByUniversity(text);
   if (uni !== 'default') {
     const pretty = uni[0].toUpperCase() + uni.slice(1);
@@ -201,6 +210,7 @@ async function playVideo(choice) {
   await showDock(src);
 }
 
+// Kick off immediately (auto-start)
 startAvatar().catch(err => {
   console.error(err);
   setStatus('Failed to start. See console.');
