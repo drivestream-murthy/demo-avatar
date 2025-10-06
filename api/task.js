@@ -1,3 +1,4 @@
+// /api/task.js
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const API_KEY = process.env.HEYGEN_API_KEY;
@@ -11,13 +12,14 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
+        'X-Api-Key': API_KEY,
       },
       body: JSON.stringify({
         session_id,
         text,
-        task_type: 'talk'
-      })
+        task_type: 'chat',   // 'chat' = LLM; 'repeat' would just echo
+        task_mode: 'sync'
+      }),
     });
     const data = await r.json();
     if (!r.ok) return res.status(r.status).json(data);
